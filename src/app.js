@@ -55,6 +55,28 @@ app.get('/random', (req, res) => {
   }
 });
 
+// 列表页面路由
+app.get('/list', async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    
+    // 导入PhotoService
+    const { getAllPhotosService } = await import('./services/photo.service.js');
+    
+    const result = await getAllPhotosService(page, limit);
+    
+    res.render('list', {
+      title: '照片列表 - Photos API',
+      photos: result.photos,
+      pagination: result.pagination
+    });
+  } catch (error) {
+    console.error('渲染列表页面时出错:', error);
+    res.status(500).send('服务器内部错误');
+  }
+});
+
 app.use('/api', apiRouter);
 
 
