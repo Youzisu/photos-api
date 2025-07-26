@@ -1,7 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import photosRouter from './routes/photos.route.js';
 import apiRouter from './routes/api.route.js';
 import {connectDB} from "./config/database.js";
 import chalk from "chalk";
@@ -9,7 +8,7 @@ import chalk from "chalk";
 // 加载环境变量
 dotenv.config();
 connectDB().then(() => {
-  console.log(chalk.green('MongoDB connected successfully'));
+  console.log(chalk.green('MongoDB连接成功'));
 })
 
 const app = express();
@@ -22,8 +21,6 @@ app.use(express.urlencoded({ extended: true }));
 
 
 
-// 路由
-app.use('/api/photos', photosRouter);
 app.use('/api', apiRouter);
 
 
