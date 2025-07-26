@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 600px;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+        p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        .api-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            border-left: 4px solid #667eea;
+        }
+        .endpoint {
+            font-family: 'Courier New', monospace;
+            background: #e9ecef;
+            padding: 0.5rem;
+            border-radius: 3px;
+            margin: 0.5rem 0;
+            font-weight: bold;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 0.5rem;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #5a6fd8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📸 Photos API</h1>
+        <p>欢迎使用 Photos API 服务！这是一个用于管理照片的 RESTful API。</p>
+        
+        <div class="api-info">
+            <h3>🚀 可用的 API 端点：</h3>
+            <div class="endpoint">GET /api/photos - 获取所有照片</div>
+            <div class="endpoint">GET /api/photos/random - 随机获取一张照片</div>
+            <div class="endpoint">GET /api/photos/:id - 根据ID获取照片</div>
+            <div class="endpoint">POST /api/photos - 创建新照片</div>
+            <div class="endpoint">PUT /api/photos/:id - 更新照片</div>
+            <div class="endpoint">DELETE /api/photos/:id - 删除照片</div>
+        </div>
+        
+        <p>🔗 <strong>服务器运行在:</strong> http://localhost:<%= PORT %></p>
+        
+        <div>
+            <a href="/api/photos" class="btn">查看所有照片</a>
+            <a href="/api/photos/random" class="btn">随机照片</a>
+        </div>
+    </div>
+</body>
+</html>
