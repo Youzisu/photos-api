@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机图片 - Photos API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #000;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .image-container {
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .random-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+        
+        .loading {
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 18px;
+            text-align: center;
+        }
+        
+        .error {
+            color: #ff6b6b;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 18px;
+            text-align: center;
+        }
+        
+        .refresh-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="image-container">
+        <div class="loading" id="loading">正在加载随机图片...</div>
+        <img class="random-image" id="randomImage" style="display: none;" alt="随机图片">
+        <div class="error" id="error" style="display: none;">暂无图片数据</div>
+    </div>
+    
+    <button class="refresh-btn" onclick="loadRandomImage()">🔄 换一张</button>
+    
+    <script>
+        async function loadRandomImage() {
+            const loading = document.getElementById('loading');
+            const image = document.getElementById('randomImage');
+            const error = document.getElementById('error');
+            
+            // 显示加载状态
+            loading.style.display = 'block';
+            image.style.display = 'none';
+            error.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/photos/random');
+                const data = await response.json();
+                
+                if (response.ok && data && data.length > 0) {
+                    const photo = data[0];
+                    image.src = photo.url;
+                    image.onload = function() {
+                        loading.style.display = 'none';
+                        image.style.display = 'block';
+                    };
+                    image.onerror = function() {
+                        loading.style.display = 'none';
+                        error.textContent = '图片加载失败';
+                        error.style.display = 'block';
+                    };
+                } else {
+                    loading.style.display = 'none';
+                    error.style.display = 'block';
+                }
+            } catch (err) {
+                loading.style.display = 'none';
+                error.textContent = '网络错误，请稍后重试';
+                error.style.display = 'block';
+            }
+        }
+        
+        // 页面加载时自动获取随机图片
+        window.onload = function() {
+            loadRandomImage();
+        };
+        
+        // 键盘事件：按空格键刷新图片
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space') {
+                event.preventDefault();
+                loadRandomImage();
+            }
+        });
+    </script>
+</body>
+</html>

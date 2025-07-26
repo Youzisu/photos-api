@@ -43,6 +43,18 @@ app.get('/', (req, res) => {
   }
 });
 
+// 随机图片页面路由
+app.get('/random', (req, res) => {
+  try {
+    res.render('random', {
+      title: '随机图片 - Photos API'
+    });
+  } catch (error) {
+    console.error('Error rendering random template:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 app.use('/api', apiRouter);
 
 
