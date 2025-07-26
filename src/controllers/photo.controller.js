@@ -13,11 +13,23 @@ class PhotoController {
     }
   }
 
-  // 获取所有照片
+  // 获取所有照片（支持分页）
   static async getAllPhotos(req, res) {
     try {
-      const photos = await getAllPhotosService();
-      res.json(photos);
+      // 从查询参数中获取分页信息，设置默认值
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      
+      // 验证分页参数
+      if (page < 1) {
+        return res.status(400).json({ message: 'Page must be greater than 0' });
+      }
+      if (limit < 1 || limit > 100) {
+        return res.status(400).json({ message: 'Limit must be between 1 and 100' });
+      }
+      
+      const result = await getAllPhotosService(page, limit);
+      res.json(result);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
