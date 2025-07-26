@@ -9,6 +9,9 @@ photoRouter.post('/', PhotoController.createPhoto);
 // 获取所有照片
 photoRouter.get('/', PhotoController.getAllPhotos);
 
+// 随机获取一张照片
+photoRouter.get('/random', PhotoController.getRandomPhoto);
+
 // 根据ID获取单个照片
 photoRouter.get('/:id', PhotoController.getPhotoById);
 

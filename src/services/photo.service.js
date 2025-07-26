@@ -30,3 +30,12 @@ export const deletePhotoService = async (id) => {
   return Photo.findByIdAndDelete(id);
 };
 
+// 随机获取一张照片
+export const getRandomPhotoService = async () => {
+  const randomDocument = await Photo.aggregate([
+    { $sample: { size: 1 } }
+  ]);
+  console.log(randomDocument);
+  return randomDocument
+};
+

@@ -1,4 +1,4 @@
-import {createPhotoService, getAllPhotosService, getPhotoByIdService, updatePhotoService, deletePhotoService} from "../services/photo.service.js";
+import {createPhotoService, getAllPhotosService, getPhotoByIdService, updatePhotoService, deletePhotoService, getRandomPhotoService} from "../services/photo.service.js";
 
 
 class PhotoController {
@@ -62,6 +62,19 @@ class PhotoController {
       }
       
       res.json({ message: 'Photo deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  // 随机获取一张照片
+  static async getRandomPhoto(req, res) {
+    try {
+      const photo = await getRandomPhotoService();
+      if (!photo) {
+        return res.status(404).json({ message: 'No photos found' });
+      }
+      res.json(photo);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
