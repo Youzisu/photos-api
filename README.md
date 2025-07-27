@@ -2,6 +2,10 @@
 
 一个基于 Node.js 和 Express 的照片管理 API 系统，提供用户认证、照片上传、管理等功能。
 
+# 示例
+- 随机图片[https://photos.茶馆.club//random](https://photos.茶馆.club/random)
+- 随机图片api[https://photos.茶馆.club/api/photos/random](https://photos.茶馆.club/api/photos/random)
+
 ## 功能特性
 
 - 🔐 用户注册和登录认证
