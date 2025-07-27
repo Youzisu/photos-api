@@ -827,6 +827,9 @@
                        if(index !== -1){
                            photos.value.splice(index, 1);
                        }
+                       if(photos.value.length === 0){
+                           await loadPhotos(pagination.currentPage - 1);
+                       }
                     } else {
                         showMessage(data.message || '删除失败');
                     }
