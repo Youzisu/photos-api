@@ -163,16 +163,94 @@
             color: #ecf0f1;
             padding: 1rem;
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-align: left;
             transition: all 0.3s ease;
             border: 1px solid #34495e;
+            line-height: 1.4;
         }
 
         .endpoint:hover {
             background: #34495e;
             transform: scale(1.02);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .data-model {
+            background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            border-left: 5px solid #27ae60;
+        }
+
+        .model-title {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .model-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .model-card h4 {
+            color: #27ae60;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .model-field {
+            margin-bottom: 0.8rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+
+        .field-name {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .field-type {
+            color: #3498db;
+        }
+
+        .field-required {
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        .response-format {
+            background: linear-gradient(135deg, #fff3e0, #ffeaa7);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            border-left: 5px solid #f39c12;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin: 1rem 0;
         }
 
         .method {
@@ -363,37 +441,213 @@
         <div class="api-section">
             <h3 class="api-title">
                 <i class="fas fa-rocket"></i>
-                可用的 API 端点
+                照片管理 API 端点
             </h3>
             <div class="endpoints-grid">
                 <div class="endpoint">
                     <span class="method get">GET</span> /api/photos<br>
-                    <small>获取所有照片（支持分页）</small>
+                    <small>获取所有照片（支持分页）</small><br>
+                    <strong>查询参数:</strong> page, limit, search<br>
+                    <strong>返回:</strong> 照片列表 + 分页信息
                 </div>
                 <div class="endpoint">
                     <span class="method get">GET</span> /api/photos/random<br>
-                    <small>随机获取一张照片</small>
+                    <small>随机获取一张照片</small><br>
+                    <strong>返回:</strong> 单个照片对象
                 </div>
                 <div class="endpoint">
                     <span class="method get">GET</span> /api/photos/:id<br>
-                    <small>根据ID获取特定照片</small>
+                    <small>根据ID获取特定照片</small><br>
+                    <strong>路径参数:</strong> id (照片ID)<br>
+                    <strong>返回:</strong> 单个照片对象
                 </div>
                 <div class="endpoint">
                     <span class="method post">POST</span> /api/photos<br>
-                    <small>创建新的照片记录</small>
+                    <small>创建新的照片记录</small><br>
+                    <strong>请求体:</strong> url*, title, description, tags<br>
+                    <strong>返回:</strong> 创建的照片对象
                 </div>
                 <div class="endpoint">
                     <span class="method put">PUT</span> /api/photos/:id<br>
-                    <small>更新现有照片信息</small>
+                    <small>更新现有照片信息</small><br>
+                    <strong>路径参数:</strong> id (照片ID)<br>
+                    <strong>请求体:</strong> url, title, description, tags<br>
+                    <strong>返回:</strong> 更新后的照片对象
                 </div>
                 <div class="endpoint">
                     <span class="method delete">DELETE</span> /api/photos/:id<br>
-                    <small>删除指定照片</small>
+                    <small>删除指定照片</small><br>
+                    <strong>路径参数:</strong> id (照片ID)<br>
+                    <strong>返回:</strong> 删除成功消息
                 </div>
             </div>
         </div>
 
+        <div class="api-section">
+            <h3 class="api-title">
+                <i class="fas fa-users"></i>
+                用户管理 API 端点
+            </h3>
+            <div class="endpoints-grid">
+                <div class="endpoint">
+                    <span class="method post">POST</span> /api/users/register<br>
+                    <small>用户注册</small><br>
+                    <strong>请求体:</strong> username*, password*, role<br>
+                    <strong>返回:</strong> 用户信息 + JWT token
+                </div>
+                <div class="endpoint">
+                    <span class="method post">POST</span> /api/users/login<br>
+                    <small>用户登录</small><br>
+                    <strong>请求体:</strong> username*, password*<br>
+                    <strong>返回:</strong> 用户信息 + JWT token
+                </div>
+                <div class="endpoint">
+                    <span class="method post">POST</span> /api/users/verify<br>
+                    <small>验证JWT token</small><br>
+                    <strong>请求头:</strong> Authorization: Bearer {token}<br>
+                    <strong>返回:</strong> 用户信息
+                </div>
+                <div class="endpoint">
+                    <span class="method get">GET</span> /api/users/profile<br>
+                    <small>获取当前用户信息</small><br>
+                    <strong>请求头:</strong> Authorization: Bearer {token}<br>
+                    <strong>返回:</strong> 当前用户信息
+                </div>
+                <div class="endpoint">
+                    <span class="method get">GET</span> /api/users<br>
+                    <small>获取所有用户（管理员）</small><br>
+                    <strong>请求头:</strong> Authorization: Bearer {token}<br>
+                    <strong>查询参数:</strong> page, limit<br>
+                    <strong>返回:</strong> 用户列表 + 分页信息
+                </div>
+                <div class="endpoint">
+                    <span class="method put">PUT</span> /api/users/:id<br>
+                    <small>更新用户信息</small><br>
+                    <strong>请求头:</strong> Authorization: Bearer {token}<br>
+                    <strong>路径参数:</strong> id (用户ID)<br>
+                    <strong>请求体:</strong> username, password, role, isActive<br>
+                    <strong>返回:</strong> 更新后的用户信息
+                </div>
+                <div class="endpoint">
+                    <span class="method delete">DELETE</span> /api/users/:id<br>
+                    <small>删除用户（管理员）</small><br>
+                    <strong>请求头:</strong> Authorization: Bearer {token}<br>
+                    <strong>路径参数:</strong> id (用户ID)<br>
+                    <strong>返回:</strong> 删除成功消息
+                </div>
+            </div>
+        </div>
 
+        <div class="data-model">
+            <h3 class="model-title">
+                <i class="fas fa-database"></i>
+                数据模型
+            </h3>
+            <div class="model-grid">
+                <div class="model-card">
+                    <h4>📸 Photo 照片模型</h4>
+                    <div class="model-field">
+                        <span class="field-name">url</span>: <span class="field-type">String</span> <span class="field-required">[必填]</span><br>
+                        <small>照片的URL地址</small>
+                    </div>
+                    <div class="model-field">
+                        <span class="field-name">title</span>: <span class="field-type">String</span><br>
+                        <small>照片标题</small>
+                    </div>
+                    <div class="model-field">
+                        <span class="field-name">description</span>: <span class="field-type">String</span><br>
+                        <small>照片描述</small>
+                    </div>
+                    <div class="model-field">
+                        <span class="field-name">tags</span>: <span class="field-type">Array[String]</span><br>
+                        <small>照片标签数组</small>
+                    </div>
+                    <div class="model-field">
+                        <span class="field-name">createdAt</span>: <span class="field-type">Date</span><br>
+                        <small>创建时间（自动生成）</small>
+                    </div>
+                    <div class="model-field">
+                        <span class="field-name">updatedAt</span>: <span class="field-type">Date</span><br>
+                        <small>更新时间（自动生成）</small>
+                    </div>
+                </div>
+                <div class="model-card">
+                    <h4>👤 User 用户模型</h4>
+                    <div class="model-field">
+                        <span class="field-name">username</span>: <span class="field-type">String</span> <span class="field-required">[必填]</span><br>
+                        <small>用户名（3-20个字符，唯一）</small>
+                    </div>
+                    <div class="model-field">
+                        <span class="field-name">password</span>: <span class="field-type">String</span> <span class="field-required">[必填]</span><br>
+                        <small>密码（至少6个字符，加密存储）</small>
+                    </div>
+                    <div class="model-field">
+                        <span class="field-name">role</span>: <span class="field-type">String</span><br>
+                        <small>用户角色：'admin' | 'user'（默认：'user'）</small>
+                    </div>
+                    <div class="model-field">
+                        <span class="field-name">isActive</span>: <span class="field-type">Boolean</span><br>
+                        <small>账户状态（默认：true）</small>
+                    </div>
+                    <div class="model-field">
+                        <span class="field-name">lastLogin</span>: <span class="field-type">Date</span><br>
+                        <small>最后登录时间</small>
+                    </div>
+                    <div class="model-field">
+                        <span class="field-name">createdAt</span>: <span class="field-type">Date</span><br>
+                        <small>注册时间（自动生成）</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="response-format">
+            <h3 class="model-title">
+                <i class="fas fa-code"></i>
+                响应格式
+            </h3>
+            <h4>✅ 成功响应格式</h4>
+            <div class="code-block">{
+  "code": 2000,
+  "data": {
+    // 具体数据内容
+  },
+  "message": "操作成功"
+}</div>
+            
+            <h4>📄 分页响应格式</h4>
+            <div class="code-block">{
+  "code": 2000,
+  "data": [
+    // 数据数组
+  ],
+  "pagination": {
+    "currentPage": 1,
+    "totalPages": 10,
+    "totalItems": 100,
+    "itemsPerPage": 10,
+    "hasNextPage": true,
+    "hasPrevPage": false
+  },
+  "message": "获取成功"
+}</div>
+
+            <h4>❌ 错误响应格式</h4>
+            <div class="code-block">{
+  "code": 4001,
+  "message": "参数验证失败",
+  "data": null
+}</div>
+
+            <h4>🔐 认证说明</h4>
+            <p>需要认证的接口请在请求头中包含JWT token：</p>
+            <div class="code-block">Authorization: Bearer {your_jwt_token}</div>
+            
+            <h4>📋 响应码说明</h4>
+            <div class="code-block">• 2xxx: 成功响应
+• 4xxx: 客户端错误（参数错误、认证失败等）
+• 5xxx: 服务器错误</div>
+        </div>
 
         <div class="features-grid">
             <div class="feature-card">
