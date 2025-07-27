@@ -326,31 +326,38 @@
     <div class="container">
         <div class="hero-section">
             <div class="logo">📸</div>
-            <h1>Photos API</h1>
+            <h1>写真馆 API</h1>
             <p class="subtitle">现代化的照片管理 RESTful API 服务，提供完整的照片存储、检索和管理功能</p>
         </div>
 
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-images"></i></div>
-                <div class="feature-title">照片管理</div>
-                <div class="feature-desc">完整的 CRUD 操作，支持照片的创建、读取、更新和删除</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-random"></i></div>
-                <div class="feature-title">随机展示</div>
-                <div class="feature-desc">智能随机算法，为您呈现精彩的照片内容</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-list"></i></div>
-                <div class="feature-title">分页浏览</div>
-                <div class="feature-desc">高效的分页系统，轻松浏览大量照片内容</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-code"></i></div>
-                <div class="feature-title">RESTful API</div>
-                <div class="feature-desc">标准化的 API 接口，易于集成和开发</div>
-            </div>
+
+
+        <div class="server-info">
+            <i class="fas fa-server"></i>
+            <strong>服务器运行在:</strong><a href="https://photos.茶馆.club">https://photos.茶馆.club</a>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="/list" class="btn primary">
+                <i class="fas fa-th-large"></i>
+                照片列表
+            </a>
+            <a href="/random" class="btn primary">
+                <i class="fas fa-shuffle"></i>
+                随机图片
+            </a>
+            <a href="/api/photos" class="btn secondary">
+                <i class="fas fa-database"></i>
+                API 数据
+            </a>
+            <a href="/api/photos/random" class="btn secondary">
+                <i class="fas fa-dice"></i>
+                随机 API
+            </a>
+            <a href="/admin/dashboard.html" class="btn secondary">
+                <i class="fas fa-dice"></i>
+                后台管理
+            </a>
         </div>
         
         <div class="api-section">
@@ -385,29 +392,30 @@
                 </div>
             </div>
         </div>
-        
-        <div class="server-info">
-            <i class="fas fa-server"></i>
-            <strong>服务器运行在:</strong> http://localhost:<%= PORT %>
-        </div>
-        
-        <div class="nav-buttons">
-            <a href="/list" class="btn primary">
-                <i class="fas fa-th-large"></i>
-                照片列表
-            </a>
-            <a href="/random" class="btn primary">
-                <i class="fas fa-shuffle"></i>
-                随机图片
-            </a>
-            <a href="/api/photos" class="btn secondary">
-                <i class="fas fa-database"></i>
-                API 数据
-            </a>
-            <a href="/api/photos/random" class="btn secondary">
-                <i class="fas fa-dice"></i>
-                随机 API
-            </a>
+
+
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-images"></i></div>
+                <div class="feature-title">照片管理</div>
+                <div class="feature-desc">完整的 CRUD 操作，支持照片的创建、读取、更新和删除</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-random"></i></div>
+                <div class="feature-title">随机展示</div>
+                <div class="feature-desc">智能随机算法，为您呈现精彩的照片内容</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-list"></i></div>
+                <div class="feature-title">分页浏览</div>
+                <div class="feature-desc">高效的分页系统，轻松浏览大量照片内容</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-code"></i></div>
+                <div class="feature-title">RESTful API</div>
+                <div class="feature-desc">标准化的 API 接口，易于集成和开发</div>
+            </div>
         </div>
     </div>
 </body>
