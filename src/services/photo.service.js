@@ -1,8 +1,8 @@
 import Photo from '../models/photo.model.js';
 
 // 创建照片
-export const createPhotoService = async (url) => {
-  const photo = new Photo({ url });
+export const createPhotoService = async (photoData) => {
+  const photo = new Photo(photoData);
   return await photo.save();
 };
 
@@ -46,10 +46,10 @@ export const getPhotoByIdService = async (id) => {
 };
 
 // 根据ID更新照片
-export const updatePhotoService = async (id, url) => {
+export const updatePhotoService = async (id, photoData) => {
   return Photo.findByIdAndUpdate(
       id,
-      {url},
+      photoData,
       {new: true, runValidators: true}
   );
 };

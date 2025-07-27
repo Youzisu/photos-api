@@ -7,9 +7,24 @@ const photoSchema = new Schema({
     type: String,
     required: true,
     unique: true
+  },
+  title: {
+    type: String,
+    required: false,
+    default: ''
+  },
+  description: {
+    type: String,
+    required: false,
+    default: ''
+  },
+  tags: {
+    type: [String],
+    required: false,
+    default: []
   }
 }, {
-  timestamps: false
+  timestamps: true
 });
 
 const Photo = mongoose.model('Photo', photoSchema);

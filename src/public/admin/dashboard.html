@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>后台管理系统 - 仪表板</title>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Import Element Plus style -->
+    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+    <!-- Import Vue 3 -->
+    <script src="//unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Import Element Plus component library -->
+    <script src="//unpkg.com/element-plus"></script>
     <style>
         * {
             margin: 0;
@@ -366,37 +371,10 @@
             to { transform: rotate(360deg); }
         }
 
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
+        /* Element Plus分页组件样式调整 */
+        .el-pagination {
             margin-top: 2rem;
-        }
-
-        .pagination button {
-            padding: 8px 12px;
-            border: 1px solid #e1e5e9;
-            background: white;
-            color: #333;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .pagination button:hover {
-            background: #f8f9fa;
-        }
-
-        .pagination button.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        .pagination button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+            justify-content: center;
         }
 
         .empty-state {
@@ -507,31 +485,18 @@
                         </div>
                     </div>
 
-                    <!-- 分页 -->
-                    <div v-if="pagination.totalPages > 1" class="pagination">
-                        <button 
-                            @click="changePage(pagination.currentPage - 1)"
-                            :disabled="pagination.currentPage === 1"
-                        >
-                            ← 上一页
-                        </button>
-                        
-                        <button 
-                            v-for="page in visiblePages" 
-                            :key="page"
-                            @click="changePage(page)"
-                            :class="{ active: page === pagination.currentPage }"
-                        >
-                            {{ page }}
-                        </button>
-                        
-                        <button 
-                            @click="changePage(pagination.currentPage + 1)"
-                            :disabled="pagination.currentPage === pagination.totalPages"
-                        >
-                            下一页 →
-                        </button>
-                    </div>
+                    <!-- Element Plus 分页组件 -->
+                    <el-pagination
+                        v-if="pagination.totalPages > 1"
+                        v-model:current-page="pagination.currentPage"
+                        :page-size="pagination.limit"
+                        :total="pagination.totalItems"
+                        :page-sizes="[6, 12, 24, 48]"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        background
+                    />
                 </div>
             </div>
         </div>
@@ -602,6 +567,7 @@
 
     <script>
         const { createApp, ref, reactive, computed, onMounted } = Vue;
+        const { ElPagination } = ElementPlus;
 
         createApp({
             setup() {
@@ -639,17 +605,16 @@
                     type: ''
                 });
 
-                const visiblePages = computed(() => {
-                    const pages = [];
-                    const start = Math.max(1, pagination.currentPage - 2);
-                    const end = Math.min(pagination.totalPages, pagination.currentPage + 2);
-                    
-                    for (let i = start; i <= end; i++) {
-                        pages.push(i);
-                    }
-                    
-                    return pages;
-                });
+                // Element Plus分页组件事件处理
+                const handleSizeChange = (newSize) => {
+                    pagination.limit = newSize;
+                    pagination.currentPage = 1; // 重置到第一页
+                    loadPhotos(1);
+                };
+
+                const handleCurrentChange = (newPage) => {
+                    loadPhotos(newPage);
+                };
 
                 const showMessage = (text, type = 'error') => {
                     message.text = text;
@@ -792,6 +757,7 @@
                     loadPhotos(pagination.currentPage);
                 };
 
+                // 保留原有的changePage函数以兼容其他可能的调用
                 const changePage = (page) => {
                     if (page >= 1 && page <= pagination.totalPages) {
                         loadPhotos(page);
@@ -925,10 +891,11 @@
                     photoForm,
                     pagination,
                     message,
-                    visiblePages,
                     searchPhotos,
                     refreshPhotos,
                     changePage,
+                    handleSizeChange,
+                    handleCurrentChange,
                     showAddModal,
                     editPhoto,
                     closeModal,
@@ -938,7 +905,9 @@
                     handleLogout
                 };
             }
-        }).mount('#app');
+        })
+        .use(ElementPlus)
+        .mount('#app');
     </script>
 </body>
 </html>

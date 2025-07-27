@@ -5,11 +5,27 @@ class PhotoController {
   // 创建照片
   static async createPhoto(req, res) {
     try {
-      const { url } = req.body;
-      const photo = await createPhotoService(url);
+      const { url, title, description, tags } = req.body;
+      
+      if (!url) {
+        return res.error('图片URL不能为空', 4001);
+      }
+      
+      const photoData = {
+        url,
+        title: title || '',
+        description: description || '',
+        tags: Array.isArray(tags) ? tags : []
+      };
+      
+      const photo = await createPhotoService(photoData);
       res.success(photo, '照片创建成功', 2000);
     } catch (error) {
-      res.error(error.message, 4000);
+      if (error.code === 11000) {
+        res.error('该图片URL已存在', 4009);
+      } else {
+        res.error(error.message, 4000);
+      }
     }
   }
 
@@ -52,8 +68,20 @@ class PhotoController {
   // 根据ID更新照片
   static async updatePhoto(req, res) {
     try {
-      const { url } = req.body;
-      const photo = await updatePhotoService(req.params.id, url);
+      const { url, title, description, tags } = req.body;
+      
+      if (!url) {
+        return res.error('图片URL不能为空', 4001);
+      }
+      
+      const photoData = {
+        url,
+        title: title || '',
+        description: description || '',
+        tags: Array.isArray(tags) ? tags : []
+      };
+      
+      const photo = await updatePhotoService(req.params.id, photoData);
       
       if (!photo) {
         return res.error('照片不存在', 4040);
@@ -61,7 +89,11 @@ class PhotoController {
       
       res.success(photo, '照片更新成功', 2000);
     } catch (error) {
-      res.error(error.message, 4000);
+      if (error.code === 11000) {
+        res.error('该图片URL已存在', 4009);
+      } else {
+        res.error(error.message, 4000);
+      }
     }
   }
 
