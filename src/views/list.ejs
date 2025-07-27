@@ -232,8 +232,12 @@
 
             <!-- 分页导航 -->
             <div class="pagination">
+                <% 
+                    // 确保limit值正确，默认为12
+                    const currentLimit = pagination.limit || 12;
+                %>
                 <% if (pagination.hasPrevPage) { %>
-                    <a href="?page=<%= pagination.currentPage - 1 %>&limit=<%= pagination.limit %>">上一页</a>
+                    <a href="?page=<%= pagination.currentPage - 1 %>&limit=<%= currentLimit %>">上一页</a>
                 <% } else { %>
                     <span class="disabled">上一页</span>
                 <% } %>
@@ -243,7 +247,7 @@
                     let endPage = Math.min(pagination.totalPages, pagination.currentPage + 2);
                     
                     if (startPage > 1) { %>
-                        <a href="?page=1&limit=<%= pagination.limit %>">1</a>
+                        <a href="?page=1&limit=<%= currentLimit %>">1</a>
                         <% if (startPage > 2) { %>
                             <span>...</span>
                         <% } %>
@@ -253,7 +257,7 @@
                         <% if (i === pagination.currentPage) { %>
                             <span class="current"><%= i %></span>
                         <% } else { %>
-                            <a href="?page=<%= i %>&limit=<%= pagination.limit %>"><%= i %></a>
+                            <a href="?page=<%= i %>&limit=<%= currentLimit %>"><%= i %></a>
                         <% } %>
                     <% }
                     
@@ -261,11 +265,11 @@
                         <% if (endPage < pagination.totalPages - 1) { %>
                             <span>...</span>
                         <% } %>
-                        <a href="?page=<%= pagination.totalPages %>&limit=<%= pagination.limit %>"><%= pagination.totalPages %></a>
+                        <a href="?page=<%= pagination.totalPages %>&limit=<%= currentLimit %>"><%= pagination.totalPages %></a>
                     <% } %>
 
                 <% if (pagination.hasNextPage) { %>
-                    <a href="?page=<%= pagination.currentPage + 1 %>&limit=<%= pagination.limit %>">下一页</a>
+                    <a href="?page=<%= pagination.currentPage + 1 %>&limit=<%= currentLimit %>">下一页</a>
                 <% } else { %>
                     <span class="disabled">下一页</span>
                 <% } %>
