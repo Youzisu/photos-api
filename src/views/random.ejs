@@ -279,22 +279,43 @@
         let autoSwitchInterval = null;
         let isAutoSwitching = false;
         
+        let countdownInterval = null;
+        let countdown = 3;
+        
+        function updateCountdown() {
+            const btn = document.getElementById('autoSwitchBtn');
+            btn.textContent = `⏸️ 停止切换 (${countdown}s)`;
+            countdown--;
+            
+            if (countdown < 0) {
+                countdown = 3;
+            }
+        }
+        
         function toggleAutoSwitch() {
             const btn = document.getElementById('autoSwitchBtn');
             
             if (isAutoSwitching) {
                 // 停止自动切换
                 clearInterval(autoSwitchInterval);
+                clearInterval(countdownInterval);
                 autoSwitchInterval = null;
+                countdownInterval = null;
                 isAutoSwitching = false;
                 btn.textContent = '🔄 自动切换';
                 btn.classList.remove('active');
             } else {
                 // 开始自动切换
-                autoSwitchInterval = setInterval(loadRandomImage, 3000);
+                countdown = 3;
+                autoSwitchInterval = setInterval(() => {
+                    loadRandomImage();
+                    countdown = 3;
+                }, 3000);
+                countdownInterval = setInterval(updateCountdown, 1000);
                 isAutoSwitching = true;
-                btn.textContent = '⏸️ 停止切换';
+                btn.textContent = '⏸️ 停止切换 (3s)';
                 btn.classList.add('active');
+                updateCountdown();
             }
         }
         
