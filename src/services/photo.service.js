@@ -8,26 +8,29 @@ export const createPhotoService = async (url) => {
 
 // 获取所有照片（支持分页）
 export const getAllPhotosService = async (page = 1, limit = 10) => {
-  const skip = (page - 1) * limit;
+  // 确保page至少为1
+  const currentPage = Math.max(1, parseInt(page));
+  const skip = (currentPage - 1) * limit;
   
   // 获取总数量
   const total = await Photo.countDocuments();
-  
+  console.log('分页信息:', { page: currentPage, limit, skip, total });
+
   // 获取分页数据
   const photos = await Photo.find()
     .skip(skip)
     .limit(limit)
-    .sort({ createdAt: -1 }); // 按创建时间倒序排列
+    .sort({  _id: 1 });
   
   // 计算分页信息
   const totalPages = Math.ceil(total / limit);
-  const hasNextPage = page < totalPages;
-  const hasPrevPage = page > 1;
+  const hasNextPage = currentPage < totalPages;
+  const hasPrevPage = currentPage > 1;
   
   return {
     photos,
     pagination: {
-      currentPage: page,
+      currentPage: currentPage,
       totalPages,
       totalItems: total,
       itemsPerPage: limit,

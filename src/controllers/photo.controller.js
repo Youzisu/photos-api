@@ -15,6 +15,7 @@ class PhotoController {
 
   // 获取所有照片（支持分页）
   static async getAllPhotos(req, res) {
+    console.log(req.query);
     try {
       // 从查询参数中获取分页信息，设置默认值
       const page = parseInt(req.query.page) || 1;
