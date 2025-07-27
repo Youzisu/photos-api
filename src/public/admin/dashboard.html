@@ -488,7 +488,7 @@
                         :current-page="pagination.currentPage"
                         :page-size="pagination.limit"
                         :total="pagination.totalItems"
-                        :page-sizes="[6, 12,15, 24, 48,50,60,70,80,90,100]"
+                        :page-sizes="[6, 12,15, 24, 48,50,60,70,80,90,100,200,300,400,500,600,700,800,900,1000]"
                         layout="total, sizes, prev, pager, next, jumper"
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
@@ -823,7 +823,10 @@
 
                     if (data.code >= 2000 && data.code < 3000) {
                         showMessage(data.message || '图片删除成功', 'success');
-                        loadPhotos(pagination.currentPage);
+                       let index = photos.value.findIndex(photo => photo._id === photoId);
+                       if(index !== -1){
+                           photos.value.splice(index, 1);
+                       }
                     } else {
                         showMessage(data.message || '删除失败');
                     }

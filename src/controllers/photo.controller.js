@@ -41,7 +41,7 @@ class PhotoController {
       if (page < 1) {
         return res.error('页码必须大于0', 4001);
       }
-      if (limit < 1 || limit > 100) {
+      if (limit < 1 || limit > 1000) {
         return res.error('每页数量必须在1-100之间', 4001);
       }
       
