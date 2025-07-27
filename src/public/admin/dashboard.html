@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>后台管理系统 - 仪表板</title>
     <!-- Import Element Plus style -->
-    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css"/>
     <!-- Import Vue 3 -->
     <script src="//unpkg.com/vue@3/dist/vue.global.js"></script>
     <!-- Import Element Plus component library -->
@@ -69,32 +69,6 @@
             padding: 2rem;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid #667eea;
-        }
-
-        .stat-title {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            color: #333;
-            font-size: 28px;
-            font-weight: 600;
-        }
 
         .management-section {
             background: white;
@@ -204,6 +178,11 @@
             border-radius: 8px;
             overflow: hidden;
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+
         }
 
         .photo-card:hover {
@@ -212,6 +191,18 @@
         }
 
         .photo-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .image-slot {
             width: 100%;
             height: 150px;
             object-fit: cover;
@@ -368,7 +359,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Element Plus分页组件样式调整 */
@@ -391,523 +384,459 @@
     </style>
 </head>
 <body>
-    <div id="app">
-        <header class="header">
-            <div class="header-content">
-                <h1 class="header-title">后台管理系统</h1>
-                <div class="user-info">
-                    <span>欢迎，{{ userInfo.username }}</span>
-                    <button class="logout-btn" @click="handleLogout">退出登录</button>
-                </div>
-            </div>
-        </header>
+<div id="app">
+    <header class="header">
+        <div class="header-content">
+            <h1 class="header-title">后台管理系统</h1>
 
-        <div class="container">
-            <!-- 统计卡片 -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-title">总图片数</div>
-                    <div class="stat-value">{{ stats.totalPhotos }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">今日新增</div>
-                    <div class="stat-value">{{ stats.todayPhotos }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">总用户数</div>
-                    <div class="stat-value">{{ stats.totalUsers }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">在线用户</div>
-                    <div class="stat-value">{{ stats.onlineUsers }}</div>
-                </div>
+
+            <div class="user-info">
+                <span>欢迎，{{ userInfo.username }}</span>
+                <button class="logout-btn" @click="handleLogout">退出登录</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+
+
+        <!-- 图片管理 -->
+        <div class="management-section">
+            <div class="section-header">
+                <h2 class="section-title">图片地址管理</h2>
+                <button class="btn btn-primary" @click="showAddModal">
+                    ➕ 添加图片
+                </button>
             </div>
 
-            <!-- 图片管理 -->
-            <div class="management-section">
-                <div class="section-header">
-                    <h2 class="section-title">图片地址管理</h2>
-                    <button class="btn btn-primary" @click="showAddModal">
-                        ➕ 添加图片
-                    </button>
+            <div class="section-content">
+                <div v-if="message.text" :class="['alert', message.type === 'error' ? 'alert-error' : 'alert-success']">
+                    {{ message.text }}
                 </div>
-                
-                <div class="section-content">
-                    <div v-if="message.text" :class="['alert', message.type === 'error' ? 'alert-error' : 'alert-success']">
-                        {{ message.text }}
-                    </div>
 
-                    <div class="search-bar">
-                        <input 
-                            type="text" 
-                            class="search-input" 
+                <div class="search-bar">
+                    <input
+                            type="text"
+                            class="search-input"
                             placeholder="搜索图片标题或描述..."
                             v-model="searchQuery"
                             @input="searchPhotos"
-                        >
-                        <button class="btn btn-secondary" @click="refreshPhotos">
-                            🔄 刷新
-                        </button>
-                    </div>
+                    >
+                    <button class="btn btn-secondary" @click="refreshPhotos">
+                        🔄 刷新
+                    </button>
+                </div>
 
-                    <div v-if="loading" style="text-align: center; padding: 2rem;">
-                        <div class="loading" style="width: 32px; height: 32px; border-width: 3px;"></div>
-                        <p style="margin-top: 1rem; color: #666;">加载中...</p>
-                    </div>
+                <div v-if="loading" style="text-align: center; padding: 2rem;">
+                    <div class="loading" style="width: 32px; height: 32px; border-width: 3px;"></div>
+                    <p style="margin-top: 1rem; color: #666;">加载中...</p>
+                </div>
 
-                    <div v-else-if="photos.length === 0" class="empty-state">
-                        <div class="empty-state-icon">📷</div>
-                        <h3>暂无图片</h3>
-                        <p>点击上方"添加图片"按钮开始添加图片</p>
-                    </div>
+                <div v-else-if="photos.length === 0" class="empty-state">
+                    <div class="empty-state-icon">📷</div>
+                    <h3>暂无图片</h3>
+                    <p>点击上方"添加图片"按钮开始添加图片</p>
+                </div>
 
-                    <div v-else class="photos-grid">
-                        <div v-for="photo in photos" :key="photo._id" class="photo-card">
-                            <img 
-                                :src="photo.url" 
-                                :alt="photo.title"
-                                class="photo-image"
-                                @error="handleImageError"
-                                loading="lazy"
-                            >
-                            <div class="photo-info">
-                                <h4>{{ photo.title || '无标题' }}</h4>
-                                <p class="photo-url">{{ photo.url }}</p>
-                                <div class="photo-actions">
-                                    <button class="btn btn-primary btn-sm" @click="editPhoto(photo)">
-                                        ✏️ 编辑
-                                    </button>
-                                    <button class="btn btn-danger btn-sm" @click="deletePhoto(photo._id)">
-                                        🗑️ 删除
-                                    </button>
+                <div v-else class="photos-grid">
+                    <div v-for="photo in photos" :key="photo._id" class="photo-card">
+
+                        <el-image :src="photo.url" style="width: 100%" @error="handleImageError" :lazy="true">
+                            <template #error>
+                                <div class="image-slot">
+                                    加载失败
                                 </div>
+                            </template>
+                        </el-image>
+                        <div class="photo-info">
+                            <h4>{{ photo.title || '无标题' }}</h4>
+                            <p class="photo-url">{{ photo.url }}</p>
+                            <div class="photo-actions">
+                                <button class="btn btn-primary btn-sm" @click="editPhoto(photo)">
+                                    ✏️ 编辑
+                                </button>
+                                <button class="btn btn-danger btn-sm" @click="deletePhoto(photo._id)">
+                                    🗑️ 删除
+                                </button>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Element Plus 分页组件 -->
-                    <el-pagination
-                        v-if="pagination.totalPages > 1"
-                        v-model:current-page="pagination.currentPage"
+                <!-- Element Plus 分页组件 -->
+                <el-pagination
+                        :current-page="pagination.currentPage"
                         :page-size="pagination.limit"
                         :total="pagination.totalItems"
-                        :page-sizes="[6, 12, 24, 48]"
+                        :page-sizes="[6, 12,15, 24, 48,50]"
                         layout="total, sizes, prev, pager, next, jumper"
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
-                        background
-                    />
-                </div>
-            </div>
-        </div>
-
-        <!-- 添加/编辑图片模态框 -->
-        <div class="modal" :class="{ show: showModal }">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">{{ editingPhoto ? '编辑图片' : '添加图片' }}</h3>
-                    <button class="close-btn" @click="closeModal">×</button>
-                </div>
-                
-                <form @submit.prevent="savePhoto">
-                    <div class="form-group">
-                        <label class="form-label">图片标题</label>
-                        <input 
-                            type="text" 
-                            class="form-input"
-                            v-model="photoForm.title"
-                            placeholder="请输入图片标题"
-                            required
-                        >
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">图片URL</label>
-                        <input 
-                            type="url" 
-                            class="form-input"
-                            v-model="photoForm.url"
-                            placeholder="请输入图片URL地址"
-                            required
-                        >
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">图片描述</label>
-                        <textarea 
-                            class="form-textarea"
-                            v-model="photoForm.description"
-                            placeholder="请输入图片描述（可选）"
-                        ></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">标签</label>
-                        <input 
-                            type="text" 
-                            class="form-input"
-                            v-model="photoForm.tags"
-                            placeholder="请输入标签，用逗号分隔"
-                        >
-                    </div>
-                    
-                    <div class="modal-actions">
-                        <button type="button" class="btn btn-secondary" @click="closeModal">
-                            取消
-                        </button>
-                        <button type="submit" class="btn btn-success" :disabled="saving">
-                            <span v-if="saving" class="loading"></span>
-                            <span v-else>{{ editingPhoto ? '更新' : '添加' }}</span>
-                        </button>
-                    </div>
-                </form>
+                        background></el-pagination>
             </div>
         </div>
     </div>
 
-    <script>
-        const { createApp, ref, reactive, computed, onMounted } = Vue;
-        const { ElPagination } = ElementPlus;
+    <!-- 添加/编辑图片模态框 -->
+    <div class="modal" :class="{ show: showModal }">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">{{ editingPhoto ? '编辑图片' : '添加图片' }}</h3>
+                <button class="close-btn" @click="closeModal">×</button>
+            </div>
 
-        createApp({
-            setup() {
-                const userInfo = ref({});
-                const stats = reactive({
-                    totalPhotos: 0,
-                    todayPhotos: 0,
-                    totalUsers: 0,
-                    onlineUsers: 1
-                });
-                
-                const photos = ref([]);
-                const loading = ref(false);
-                const saving = ref(false);
-                const searchQuery = ref('');
-                const showModal = ref(false);
-                const editingPhoto = ref(null);
-                
-                const photoForm = reactive({
-                    title: '',
-                    url: '',
-                    description: '',
-                    tags: ''
-                });
-                
-                const pagination = reactive({
-                    currentPage: 1,
-                    totalPages: 1,
-                    totalItems: 0,
-                    limit: 12
-                });
-                
-                const message = reactive({
-                    text: '',
-                    type: ''
-                });
+            <form @submit.prevent="savePhoto">
+                <div class="form-group">
+                    <label class="form-label">图片标题</label>
+                    <input
+                            type="text"
+                            class="form-input"
+                            v-model="photoForm.title"
+                            placeholder="请输入图片标题"
+                            required
+                    >
+                </div>
 
-                // Element Plus分页组件事件处理
-                const handleSizeChange = (newSize) => {
-                    pagination.limit = newSize;
-                    pagination.currentPage = 1; // 重置到第一页
-                    loadPhotos(1);
-                };
+                <div class="form-group">
+                    <label class="form-label">图片URL</label>
+                    <input
+                            type="url"
+                            class="form-input"
+                            v-model="photoForm.url"
+                            placeholder="请输入图片URL地址"
+                            required
+                    >
+                </div>
 
-                const handleCurrentChange = (newPage) => {
-                    loadPhotos(newPage);
-                };
+                <div class="form-group">
+                    <label class="form-label">图片描述</label>
+                    <textarea
+                            class="form-textarea"
+                            v-model="photoForm.description"
+                            placeholder="请输入图片描述（可选）"
+                    ></textarea>
+                </div>
 
-                const showMessage = (text, type = 'error') => {
-                    message.text = text;
-                    message.type = type;
-                    setTimeout(() => {
-                        message.text = '';
-                    }, 5000);
-                };
+                <div class="form-group">
+                    <label class="form-label">标签</label>
+                    <input
+                            type="text"
+                            class="form-input"
+                            v-model="photoForm.tags"
+                            placeholder="请输入标签，用逗号分隔"
+                    >
+                </div>
 
-                const getAuthToken = () => {
-                    return localStorage.getItem('token');
-                };
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" @click="closeModal">
+                        取消
+                    </button>
+                    <button type="submit" class="btn btn-success" :disabled="saving">
+                        <span v-if="saving" class="loading"></span>
+                        <span v-else>{{ editingPhoto ? '更新' : '添加' }}</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-                const checkAuth = () => {
+<script>
+    const {createApp, ref, reactive, computed, onMounted} = Vue;
+    const {ElPagination} = ElementPlus;
+
+    createApp({
+        setup() {
+            const userInfo = ref({});
+
+
+            const photos = ref([]);
+            const loading = ref(false);
+            const saving = ref(false);
+            const searchQuery = ref('');
+            const showModal = ref(false);
+            const editingPhoto = ref(null);
+
+            const photoForm = reactive({
+                title: '',
+                url: '',
+                description: '',
+                tags: ''
+            });
+
+            const pagination = reactive({
+                currentPage: 1,
+                totalPages: 1,
+                totalItems: 0,
+                limit: 15
+            });
+
+            const message = reactive({
+                text: '',
+                type: ''
+            });
+
+            // Element Plus分页组件事件处理
+            const handleSizeChange = (newSize) => {
+                pagination.limit = newSize;
+                pagination.currentPage = 1; // 重置到第一页
+                loadPhotos(1);
+            };
+
+            const handleCurrentChange = (newPage) => {
+                loadPhotos(newPage);
+            };
+
+            const showMessage = (text, type = 'error') => {
+                message.text = text;
+                message.type = type;
+                setTimeout(() => {
+                    message.text = '';
+                }, 5000);
+            };
+
+            const getAuthToken = () => {
+                return localStorage.getItem('token');
+            };
+
+            const checkAuth = () => {
+                const token = getAuthToken();
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return false;
+                }
+                return true;
+            };
+
+            const loadUserInfo = async () => {
+                try {
                     const token = getAuthToken();
-                    if (!token) {
-                        window.location.href = 'login.html';
-                        return false;
-                    }
-                    return true;
-                };
+                    const response = await fetch('/api/users/profile', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
 
-                const loadUserInfo = async () => {
-                    try {
-                        const token = getAuthToken();
-                        const response = await fetch('/api/users/profile', {
-                            headers: {
-                                'Authorization': `Bearer ${token}`
-                            }
-                        });
-                        
-                        if (response.status === 401) {
-                            // Token无效，重定向到登录页面
-                            localStorage.removeItem('token');
-                            window.location.href = 'login.html';
-                            return;
-                        }
-                        
-                        const data = await response.json();
-                        if (data.code >= 2000 && data.code < 3000) {
-                            userInfo.value = data.data;
-                        } else {
-                            // API返回失败，可能是认证问题
-                            localStorage.removeItem('token');
-                            window.location.href = 'login.html';
-                        }
-                    } catch (error) {
-                        console.error('获取用户信息失败:', error);
-                        // 网络错误或其他问题，重定向到登录页面
+                    if (response.status === 401) {
+                        // Token无效，重定向到登录页面
+                        localStorage.removeItem('token');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+
+                    const data = await response.json();
+                    if (data.code >= 2000 && data.code < 3000) {
+                        userInfo.value = data.data;
+                    } else {
+                        // API返回失败，可能是认证问题
                         localStorage.removeItem('token');
                         window.location.href = 'login.html';
                     }
-                };
-
-                const loadStats = async () => {
-                    try {
-                        const [photosResponse, usersResponse] = await Promise.all([
-                            fetch('/api/photos'),
-                            fetch('/api/users', {
-                                headers: {
-                                    'Authorization': `Bearer ${getAuthToken()}`
-                                }
-                            })
-                        ]);
-                        
-                        // 检查用户API响应状态
-                        if (usersResponse.status === 401) {
-                            localStorage.removeItem('token');
-                            window.location.href = 'login.html';
-                            return;
-                        }
-                        
-                        const photosData = await photosResponse.json();
-                        const usersData = await usersResponse.json();
-                        
-                        if (photosData.code >= 2000 && photosData.code < 3000) {
-                            stats.totalPhotos = photosData.data.totalItems;
-                            // 计算今日新增（简化版本）
-                            const today = new Date().toDateString();
-                            stats.todayPhotos = photosData.data.photos.filter(photo => 
-                                new Date(photo.createdAt).toDateString() === today
-                            ).length;
-                        }
-                        
-                        if (usersData.code >= 2000 && usersData.code < 3000) {
-                            stats.totalUsers = usersData.data.totalItems;
-                        }
-                    } catch (error) {
-                        console.error('获取统计信息失败:', error);
-                        // 不在这里重定向，避免影响图片数据加载
-                    }
-                };
-
-                const loadPhotos = async (page = 1) => {
-                    loading.value = true;
-                    try {
-                        const response = await fetch(`/api/photos?page=${page}&limit=${pagination.limit}`);
-                        const data = await response.json();
-                        
-                        if (data.code >= 2000 && data.code < 3000) {
-                            photos.value = data.data.photos;
-                            pagination.currentPage = data.data.currentPage;
-                            pagination.totalPages = data.data.totalPages;
-                            pagination.totalItems = data.data.totalItems;
-                        } else {
-                            showMessage(data.message || '获取图片列表失败');
-                        }
-                    } catch (error) {
-                        console.error('获取图片列表失败:', error);
-                        showMessage('网络错误，请稍后重试');
-                    } finally {
-                        loading.value = false;
-                    }
-                };
-
-                const searchPhotos = async () => {
-                    if (!searchQuery.value.trim()) {
-                        loadPhotos();
-                        return;
-                    }
-                    
-                    loading.value = true;
-                    try {
-                        // 这里可以实现搜索功能，暂时使用过滤
-                        await loadPhotos();
-                        photos.value = photos.value.filter(photo => 
-                            photo.title?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                            photo.description?.toLowerCase().includes(searchQuery.value.toLowerCase())
-                        );
-                    } catch (error) {
-                        console.error('搜索失败:', error);
-                        showMessage('搜索失败');
-                    } finally {
-                        loading.value = false;
-                    }
-                };
-
-                const refreshPhotos = () => {
-                    searchQuery.value = '';
-                    loadPhotos(pagination.currentPage);
-                };
-
-                // 保留原有的changePage函数以兼容其他可能的调用
-                const changePage = (page) => {
-                    if (page >= 1 && page <= pagination.totalPages) {
-                        loadPhotos(page);
-                    }
-                };
-
-                const showAddModal = () => {
-                    editingPhoto.value = null;
-                    photoForm.title = '';
-                    photoForm.url = '';
-                    photoForm.description = '';
-                    photoForm.tags = '';
-                    showModal.value = true;
-                };
-
-                const editPhoto = (photo) => {
-                    editingPhoto.value = photo;
-                    photoForm.title = photo.title || '';
-                    photoForm.url = photo.url || '';
-                    photoForm.description = photo.description || '';
-                    photoForm.tags = photo.tags ? photo.tags.join(', ') : '';
-                    showModal.value = true;
-                };
-
-                const closeModal = () => {
-                    showModal.value = false;
-                    editingPhoto.value = null;
-                };
-
-                const savePhoto = async () => {
-                    saving.value = true;
-                    try {
-                        const token = getAuthToken();
-                        const photoData = {
-                            title: photoForm.title,
-                            url: photoForm.url,
-                            description: photoForm.description,
-                            tags: photoForm.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
-                        };
-                        
-                        const url = editingPhoto.value 
-                            ? `/api/photos/${editingPhoto.value._id}`
-                            : '/api/photos';
-                        
-                        const method = editingPhoto.value ? 'PUT' : 'POST';
-                        
-                        const response = await fetch(url, {
-                            method,
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${token}`
-                            },
-                            body: JSON.stringify(photoData)
-                        });
-                        
-                        const data = await response.json();
-                        
-                        if (data.code >= 2000 && data.code < 3000) {
-                            showMessage(data.message || (editingPhoto.value ? '图片更新成功' : '图片添加成功'), 'success');
-                            closeModal();
-                            loadPhotos(pagination.currentPage);
-                            loadStats();
-                        } else {
-                            showMessage(data.message || '操作失败');
-                        }
-                    } catch (error) {
-                        console.error('保存图片失败:', error);
-                        showMessage('网络错误，请稍后重试');
-                    } finally {
-                        saving.value = false;
-                    }
-                };
-
-                const deletePhoto = async (photoId) => {
-                    if (!confirm('确定要删除这张图片吗？')) {
-                        return;
-                    }
-                    
-                    try {
-                        const token = getAuthToken();
-                        const response = await fetch(`/api/photos/${photoId}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'Authorization': `Bearer ${token}`
-                            }
-                        });
-                        
-                        const data = await response.json();
-                        
-                        if (data.code >= 2000 && data.code < 3000) {
-                            showMessage(data.message || '图片删除成功', 'success');
-                            loadPhotos(pagination.currentPage);
-                            loadStats();
-                        } else {
-                            showMessage(data.message || '删除失败');
-                        }
-                    } catch (error) {
-                        console.error('删除图片失败:', error);
-                        showMessage('网络错误，请稍后重试');
-                    }
-                };
-
-                const handleImageError = (event) => {
-                    event.target.style.display = 'none';
-                    event.target.nextElementSibling.textContent = '图片加载失败';
-                };
-
-                const handleLogout = () => {
+                } catch (error) {
+                    console.error('获取用户信息失败:', error);
+                    // 网络错误或其他问题，重定向到登录页面
                     localStorage.removeItem('token');
                     window.location.href = 'login.html';
-                };
+                }
+            };
 
-                onMounted(() => {
-                    if (!checkAuth()) {
-                        return; // 如果认证失败，直接返回，不执行后续操作
+
+            const loadPhotos = async (page = 1) => {
+                loading.value = true;
+                try {
+                    const response = await fetch(`/api/photos?page=${page}&limit=${pagination.limit}`);
+                    const data = await response.json();
+
+                    if (data.code >= 2000 && data.code < 3000) {
+                        photos.value = data.data.photos;
+                        pagination.currentPage = data.data.pagination.currentPage;
+                        pagination.totalPages = data.data.pagination.totalPages;
+                        pagination.totalItems = data.data.pagination.totalItems;
+                    } else {
+                        showMessage(data.message || '获取图片列表失败');
                     }
-                    loadUserInfo();
-                    loadPhotos();
-                    loadStats();
-                });
+                } catch (error) {
+                    console.error('获取图片列表失败:', error);
+                    showMessage('网络错误，请稍后重试');
+                } finally {
+                    loading.value = false;
+                }
+            };
 
-                return {
-                    userInfo,
-                    stats,
-                    photos,
-                    loading,
-                    saving,
-                    searchQuery,
-                    showModal,
-                    editingPhoto,
-                    photoForm,
-                    pagination,
-                    message,
-                    searchPhotos,
-                    refreshPhotos,
-                    changePage,
-                    handleSizeChange,
-                    handleCurrentChange,
-                    showAddModal,
-                    editPhoto,
-                    closeModal,
-                    savePhoto,
-                    deletePhoto,
-                    handleImageError,
-                    handleLogout
-                };
-            }
-        })
+            const searchPhotos = async () => {
+                if (!searchQuery.value.trim()) {
+                    loadPhotos();
+                    return;
+                }
+
+                loading.value = true;
+                try {
+                    // 这里可以实现搜索功能，暂时使用过滤
+                    await loadPhotos();
+                    photos.value = photos.value.filter(photo =>
+                        photo.title?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                        photo.description?.toLowerCase().includes(searchQuery.value.toLowerCase())
+                    );
+                } catch (error) {
+                    console.error('搜索失败:', error);
+                    showMessage('搜索失败');
+                } finally {
+                    loading.value = false;
+                }
+            };
+
+            const refreshPhotos = () => {
+                searchQuery.value = '';
+                loadPhotos(pagination.currentPage);
+            };
+
+            // 保留原有的changePage函数以兼容其他可能的调用
+            const changePage = (page) => {
+                if (page >= 1 && page <= pagination.totalPages) {
+                    loadPhotos(page);
+                }
+            };
+
+            const showAddModal = () => {
+                editingPhoto.value = null;
+                photoForm.title = '';
+                photoForm.url = '';
+                photoForm.description = '';
+                photoForm.tags = '';
+                showModal.value = true;
+            };
+
+            const editPhoto = (photo) => {
+                editingPhoto.value = photo;
+                photoForm.title = photo.title || '';
+                photoForm.url = photo.url || '';
+                photoForm.description = photo.description || '';
+                photoForm.tags = photo.tags ? photo.tags.join(', ') : '';
+                showModal.value = true;
+            };
+
+            const closeModal = () => {
+                showModal.value = false;
+                editingPhoto.value = null;
+            };
+
+            const savePhoto = async () => {
+                saving.value = true;
+                try {
+                    const token = getAuthToken();
+                    const photoData = {
+                        title: photoForm.title,
+                        url: photoForm.url,
+                        description: photoForm.description,
+                        tags: photoForm.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
+                    };
+
+                    const url = editingPhoto.value
+                        ? `/api/photos/${editingPhoto.value._id}`
+                        : '/api/photos';
+
+                    const method = editingPhoto.value ? 'PUT' : 'POST';
+
+                    const response = await fetch(url, {
+                        method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(photoData)
+                    });
+
+                    const data = await response.json();
+
+                    if (data.code >= 2000 && data.code < 3000) {
+                        showMessage(data.message || (editingPhoto.value ? '图片更新成功' : '图片添加成功'), 'success');
+                        closeModal();
+                        loadPhotos(pagination.currentPage);
+                    } else {
+                        showMessage(data.message || '操作失败');
+                    }
+                } catch (error) {
+                    console.error('保存图片失败:', error);
+                    showMessage('网络错误，请稍后重试');
+                } finally {
+                    saving.value = false;
+                }
+            };
+
+            const deletePhoto = async (photoId) => {
+                if (!confirm('确定要删除这张图片吗？')) {
+                    return;
+                }
+
+                try {
+                    const token = getAuthToken();
+                    const response = await fetch(`/api/photos/${photoId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.code >= 2000 && data.code < 3000) {
+                        showMessage(data.message || '图片删除成功', 'success');
+                        loadPhotos(pagination.currentPage);
+                    } else {
+                        showMessage(data.message || '删除失败');
+                    }
+                } catch (error) {
+                    console.error('删除图片失败:', error);
+                    showMessage('网络错误，请稍后重试');
+                }
+            };
+
+            const handleImageError = (event) => {
+                event.target.style.display = 'none';
+                event.target.nextElementSibling.textContent = '图片加载失败';
+            };
+
+            const handleLogout = () => {
+                localStorage.removeItem('token');
+                window.location.href = 'login.html';
+            };
+
+            onMounted(() => {
+                if (!checkAuth()) {
+                    return; // 如果认证失败，直接返回，不执行后续操作
+                }
+                loadUserInfo();
+                loadPhotos();
+            });
+
+            return {
+                userInfo,
+                photos,
+                loading,
+                saving,
+                searchQuery,
+                showModal,
+                editingPhoto,
+                photoForm,
+                pagination,
+                message,
+                searchPhotos,
+                refreshPhotos,
+                changePage,
+                handleSizeChange,
+                handleCurrentChange,
+                showAddModal,
+                editPhoto,
+                closeModal,
+                savePhoto,
+                deletePhoto,
+                handleImageError,
+                handleLogout
+            };
+        }
+    })
         .use(ElementPlus)
         .mount('#app');
-    </script>
+</script>
 </body>
 </html>
