@@ -191,6 +191,14 @@
         .strength-weak { color: #e74c3c; }
         .strength-medium { color: #f39c12; }
         .strength-strong { color: #27ae60; }
+
+        .form-help {
+            display: block;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #6c757d;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -267,6 +275,20 @@
                     </select>
                 </div>
 
+                <div class="form-group">
+                    <label class="form-label" for="registerKey">注册密钥</label>
+                    <input 
+                        type="password" 
+                        id="registerKey"
+                        class="form-input"
+                        v-model="registerForm.registerKey"
+                        placeholder="请输入注册密钥"
+                        required
+                        :disabled="loading"
+                    >
+                    <small class="form-help">请联系管理员获取注册密钥</small>
+                </div>
+
                 <button type="submit" class="register-btn" :disabled="loading || !isFormValid">
                     <span v-if="loading" class="loading"></span>
                     <span v-else>注册</span>
@@ -288,7 +310,8 @@
                     username: '',
                     password: '',
                     confirmPassword: '',
-                    role: 'user'
+                    role: 'user',
+                    registerKey: ''
                 });
 
                 const loading = ref(false);
@@ -305,7 +328,8 @@
                 const isFormValid = computed(() => {
                     return registerForm.username.length >= 3 &&
                            registerForm.password.length >= 6 &&
-                           registerForm.password === registerForm.confirmPassword;
+                           registerForm.password === registerForm.confirmPassword &&
+                           registerForm.registerKey.length > 0;
                 });
 
                 const showMessage = (text, type = 'error') => {
@@ -365,7 +389,8 @@
                             body: JSON.stringify({
                                 username: registerForm.username,
                                 password: registerForm.password,
-                                role: registerForm.role
+                                role: registerForm.role,
+                                registerKey: registerForm.registerKey
                             })
                         });
 

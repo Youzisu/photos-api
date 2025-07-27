@@ -3,11 +3,25 @@ import * as UserService from '../services/user.service.js';
 // 用户注册
 export const register = async (req, res) => {
   try {
-    const { username, password, role } = req.body;
+    const { username, password, role, registerKey } = req.body;
     
     // 验证必填字段
     if (!username || !password) {
       return res.error('用户名和密码都是必填的', 4001);
+    }
+    
+    // 验证注册密钥
+    const requiredRegisterKey = process.env.REGISTER_KEY;
+    if (!requiredRegisterKey) {
+      return res.error('系统未配置注册密钥，请联系管理员', 5002);
+    }
+    
+    if (!registerKey) {
+      return res.error('注册密钥是必填的', 4001);
+    }
+    
+    if (registerKey !== requiredRegisterKey) {
+      return res.error('注册密钥不正确', 4003);
     }
     
     const result = await UserService.registerUserService({
