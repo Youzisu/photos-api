@@ -50,10 +50,16 @@
             text-align: center;
         }
         
-        .refresh-btn {
+        .control-buttons {
             position: fixed;
             bottom: 30px;
             right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .btn {
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid rgba(255, 255, 255, 0.3);
             color: white;
@@ -64,12 +70,25 @@
             font-size: 14px;
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
+            min-width: 120px;
+            text-align: center;
         }
         
-        .refresh-btn:hover {
+        .btn:hover {
             background: rgba(255, 255, 255, 0.2);
             border-color: rgba(255, 255, 255, 0.5);
             transform: translateY(-2px);
+        }
+        
+        .btn.active {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: rgba(76, 175, 80, 0.6);
+            color: #4CAF50;
+        }
+        
+        .btn.active:hover {
+            background: rgba(76, 175, 80, 0.4);
+            border-color: rgba(76, 175, 80, 0.8);
         }
         
         .photo-info {
@@ -119,16 +138,22 @@
         
         @media (max-width: 768px) {
             .photo-info {
-                left: 15px;
-                right: 15px;
-                bottom: 80px;
+                left: 10px;
+                right: 10px;
+                bottom: 140px;
             }
             
-            .refresh-btn {
-                bottom: 15px;
-                right: 15px;
-                left: 15px;
-                width: auto;
+            .control-buttons {
+                left: 50%;
+                transform: translateX(-50%);
+                right: auto;
+                width: calc(100% - 60px);
+                max-width: 200px;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
             }
         }
     </style>
@@ -146,7 +171,10 @@
         <div class="photo-tags" id="photoTags"></div>
     </div>
     
-    <button class="refresh-btn" onclick="loadRandomImage()">🔄 换一张</button>
+    <div class="control-buttons">
+        <button class="btn" id="autoSwitchBtn" onclick="toggleAutoSwitch()">🔄 自动切换</button>
+        <button class="btn" onclick="loadRandomImage()">🔄 换一张</button>
+    </div>
     
     <script>
         async function loadRandomImage() {
@@ -245,6 +273,28 @@
             // 只有当有信息时才显示信息面板
             if (hasInfo) {
                 photoInfo.style.display = 'block';
+            }
+        }
+        
+        let autoSwitchInterval = null;
+        let isAutoSwitching = false;
+        
+        function toggleAutoSwitch() {
+            const btn = document.getElementById('autoSwitchBtn');
+            
+            if (isAutoSwitching) {
+                // 停止自动切换
+                clearInterval(autoSwitchInterval);
+                autoSwitchInterval = null;
+                isAutoSwitching = false;
+                btn.textContent = '🔄 自动切换';
+                btn.classList.remove('active');
+            } else {
+                // 开始自动切换
+                autoSwitchInterval = setInterval(loadRandomImage, 3000);
+                isAutoSwitching = true;
+                btn.textContent = '⏸️ 停止切换';
+                btn.classList.add('active');
             }
         }
         
