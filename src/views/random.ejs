@@ -71,6 +71,66 @@
             border-color: rgba(255, 255, 255, 0.5);
             transform: translateY(-2px);
         }
+        
+        .photo-info {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            right: 120px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .photo-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        
+        .photo-description {
+            font-size: 14px;
+            color: #ccc;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .photo-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .photo-tag {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .photo-info {
+                left: 15px;
+                right: 15px;
+                bottom: 80px;
+            }
+            
+            .refresh-btn {
+                bottom: 15px;
+                right: 15px;
+                left: 15px;
+                width: auto;
+            }
+        }
     </style>
 </head>
 <body>
@@ -80,6 +140,12 @@
         <div class="error" id="error" style="display: none;">暂无图片数据</div>
     </div>
     
+    <div class="photo-info" id="photoInfo">
+        <div class="photo-title" id="photoTitle"></div>
+        <div class="photo-description" id="photoDescription"></div>
+        <div class="photo-tags" id="photoTags"></div>
+    </div>
+    
     <button class="refresh-btn" onclick="loadRandomImage()">🔄 换一张</button>
     
     <script>
@@ -87,36 +153,98 @@
             const loading = document.getElementById('loading');
             const image = document.getElementById('randomImage');
             const error = document.getElementById('error');
+            const photoInfo = document.getElementById('photoInfo');
             
             // 显示加载状态
             loading.style.display = 'block';
             image.style.display = 'none';
             error.style.display = 'none';
+            photoInfo.style.display = 'none';
             
             try {
                 const response = await fetch('/api/photos/random');
-                const data = await response.json();
+                const result = await response.json();
                 
-                if (response.ok && data && data.length > 0) {
-                    const photo = data[0];
-                    image.src = photo.url;
-                    image.onload = function() {
+                // 检查API响应格式：{code, data, message}
+                if (response.ok && result.code >= 2000 && result.code < 3000) {
+                    // data是一个数组，取第一个元素
+                    if (result.data && result.data.length > 0) {
+                        const photo = result.data[0];
+                        image.src = photo.url;
+                        image.alt = photo.title || '随机图片';
+                        
+                        image.onload = function() {
+                            loading.style.display = 'none';
+                            image.style.display = 'block';
+                            
+                            // 显示图片信息
+                            displayPhotoInfo(photo);
+                        };
+                        
+                        image.onerror = function() {
+                            loading.style.display = 'none';
+                            error.textContent = '图片加载失败';
+                            error.style.display = 'block';
+                        };
+                    } else {
                         loading.style.display = 'none';
-                        image.style.display = 'block';
-                    };
-                    image.onerror = function() {
-                        loading.style.display = 'none';
-                        error.textContent = '图片加载失败';
+                        error.textContent = '暂无图片数据';
                         error.style.display = 'block';
-                    };
+                    }
                 } else {
                     loading.style.display = 'none';
+                    error.textContent = result.message || '获取图片失败';
                     error.style.display = 'block';
                 }
             } catch (err) {
+                console.error('获取随机图片失败:', err);
                 loading.style.display = 'none';
                 error.textContent = '网络错误，请稍后重试';
                 error.style.display = 'block';
+            }
+        }
+        
+        function displayPhotoInfo(photo) {
+            const photoInfo = document.getElementById('photoInfo');
+            const photoTitle = document.getElementById('photoTitle');
+            const photoDescription = document.getElementById('photoDescription');
+            const photoTags = document.getElementById('photoTags');
+            
+            // 清空之前的内容
+            photoTitle.textContent = '';
+            photoDescription.textContent = '';
+            photoTags.innerHTML = '';
+            
+            let hasInfo = false;
+            
+            // 显示标题
+            if (photo.title && photo.title.trim()) {
+                photoTitle.textContent = photo.title;
+                hasInfo = true;
+            }
+            
+            // 显示描述
+            if (photo.description && photo.description.trim()) {
+                photoDescription.textContent = photo.description;
+                hasInfo = true;
+            }
+            
+            // 显示标签
+            if (photo.tags && Array.isArray(photo.tags) && photo.tags.length > 0) {
+                photo.tags.forEach(tag => {
+                    if (tag && tag.trim()) {
+                        const tagElement = document.createElement('span');
+                        tagElement.className = 'photo-tag';
+                        tagElement.textContent = tag;
+                        photoTags.appendChild(tagElement);
+                        hasInfo = true;
+                    }
+                });
+            }
+            
+            // 只有当有信息时才显示信息面板
+            if (hasInfo) {
+                photoInfo.style.display = 'block';
             }
         }
         
