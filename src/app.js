@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import apiRouter from './routes/api.route.js';
 import {connectDB} from "./config/database.js";
 import chalk from "chalk";
+import { responseMiddleware, errorHandler, notFoundHandler } from './middleware/response.middleware.js';
 
 // 获取当前文件的目录路径
 const __filename = fileURLToPath(import.meta.url);
@@ -28,6 +29,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// 响应格式化中间件
+app.use(responseMiddleware);
 
 // 静态文件中间件
 app.use(express.static(path.join(__dirname, 'public')));
@@ -82,6 +86,11 @@ app.get('/list', async (req, res) => {
 
 app.use('/api', apiRouter);
 
+// 404处理中间件（必须在所有路由之后）
+app.use(notFoundHandler);
+
+// 全局错误处理中间件（必须在最后）
+app.use(errorHandler);
 
 // 启动服务器
 app.listen(PORT, () => {

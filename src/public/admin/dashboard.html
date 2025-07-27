@@ -689,7 +689,7 @@
                         }
                         
                         const data = await response.json();
-                        if (data.success) {
+                        if (data.code >= 2000 && data.code < 3000) {
                             userInfo.value = data.data;
                         } else {
                             // API返回失败，可能是认证问题
@@ -725,7 +725,7 @@
                         const photosData = await photosResponse.json();
                         const usersData = await usersResponse.json();
                         
-                        if (photosData.success) {
+                        if (photosData.code >= 2000 && photosData.code < 3000) {
                             stats.totalPhotos = photosData.data.totalItems;
                             // 计算今日新增（简化版本）
                             const today = new Date().toDateString();
@@ -734,7 +734,7 @@
                             ).length;
                         }
                         
-                        if (usersData.success) {
+                        if (usersData.code >= 2000 && usersData.code < 3000) {
                             stats.totalUsers = usersData.data.totalItems;
                         }
                     } catch (error) {
@@ -749,13 +749,13 @@
                         const response = await fetch(`/api/photos?page=${page}&limit=${pagination.limit}`);
                         const data = await response.json();
                         
-                        if (data.success) {
+                        if (data.code >= 2000 && data.code < 3000) {
                             photos.value = data.data.photos;
                             pagination.currentPage = data.data.currentPage;
                             pagination.totalPages = data.data.totalPages;
                             pagination.totalItems = data.data.totalItems;
                         } else {
-                            showMessage('获取图片列表失败');
+                            showMessage(data.message || '获取图片列表失败');
                         }
                     } catch (error) {
                         console.error('获取图片列表失败:', error);
@@ -849,8 +849,8 @@
                         
                         const data = await response.json();
                         
-                        if (data.success) {
-                            showMessage(editingPhoto.value ? '图片更新成功' : '图片添加成功', 'success');
+                        if (data.code >= 2000 && data.code < 3000) {
+                            showMessage(data.message || (editingPhoto.value ? '图片更新成功' : '图片添加成功'), 'success');
                             closeModal();
                             loadPhotos(pagination.currentPage);
                             loadStats();
@@ -881,8 +881,8 @@
                         
                         const data = await response.json();
                         
-                        if (data.success) {
-                            showMessage('图片删除成功', 'success');
+                        if (data.code >= 2000 && data.code < 3000) {
+                            showMessage(data.message || '图片删除成功', 'success');
                             loadPhotos(pagination.currentPage);
                             loadStats();
                         } else {

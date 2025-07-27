@@ -7,10 +7,7 @@ export const register = async (req, res) => {
     
     // 验证必填字段
     if (!username || !password) {
-      return res.status(400).json({
-        success: false,
-        message: '用户名和密码都是必填的'
-      });
+      return res.error('用户名和密码都是必填的', 4001);
     }
     
     const result = await UserService.registerUserService({
@@ -19,16 +16,9 @@ export const register = async (req, res) => {
       role
     });
     
-    res.status(201).json({
-      success: true,
-      message: '用户注册成功',
-      data: result
-    });
+    res.success(result, '用户注册成功', 2001);
   } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message
-    });
+    res.error(error.message, 4002);
   }
 };
 
@@ -39,10 +29,7 @@ export const login = async (req, res) => {
     
     // 验证必填字段
     if (!username || !password) {
-      return res.status(400).json({
-        success: false,
-        message: '用户名和密码都是必填的'
-      });
+      return res.error('用户名和密码都是必填的', 4001);
     }
     
     const result = await UserService.loginUserService({
@@ -50,16 +37,9 @@ export const login = async (req, res) => {
       password
     });
     
-    res.json({
-      success: true,
-      message: '登录成功',
-      data: result
-    });
+    res.success(result, '登录成功', 2002);
   } catch (error) {
-    res.status(401).json({
-      success: false,
-      message: error.message
-    });
+    res.error(error.message, 4010);
   }
 };
 
@@ -68,15 +48,9 @@ export const getProfile = async (req, res) => {
   try {
     const user = await UserService.getUserByIdService(req.user.id);
     
-    res.json({
-      success: true,
-      data: user
-    });
+    res.success(user, '获取用户信息成功', 2003);
   } catch (error) {
-    res.status(404).json({
-      success: false,
-      message: error.message
-    });
+    res.error(error.message, 4040);
   }
 };
 
@@ -88,15 +62,9 @@ export const getAllUsers = async (req, res) => {
     
     const result = await UserService.getAllUsersService(page, limit);
     
-    res.json({
-      success: true,
-      data: result
-    });
+    res.paginate(result.users, result.pagination, '获取用户列表成功', 2004);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+    res.error(error.message, 5001);
   }
 };
 
@@ -106,15 +74,9 @@ export const getUserById = async (req, res) => {
     const { id } = req.params;
     const user = await UserService.getUserByIdService(id);
     
-    res.json({
-      success: true,
-      data: user
-    });
+    res.success(user, '获取用户信息成功', 2005);
   } catch (error) {
-    res.status(404).json({
-      success: false,
-      message: error.message
-    });
+    res.error(error.message, 4041);
   }
 };
 
@@ -126,16 +88,9 @@ export const updateUser = async (req, res) => {
     
     const user = await UserService.updateUserService(id, updateData);
     
-    res.json({
-      success: true,
-      message: '用户信息更新成功',
-      data: user
-    });
+    res.success(user, '用户信息更新成功', 2006);
   } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message
-    });
+    res.error(error.message, 4003);
   }
 };
 
@@ -146,15 +101,9 @@ export const deleteUser = async (req, res) => {
     
     await UserService.deleteUserService(id);
     
-    res.json({
-      success: true,
-      message: '用户删除成功'
-    });
+    res.success(null, '用户删除成功', 2007);
   } catch (error) {
-    res.status(404).json({
-      success: false,
-      message: error.message
-    });
+    res.error(error.message, 4042);
   }
 };
 
@@ -164,23 +113,14 @@ export const verifyToken = async (req, res) => {
     const token = req.headers.authorization?.replace('Bearer ', '') || req.headers['x-access-token'];
     
     if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: '缺少认证token'
-      });
+      return res.error('缺少认证token', 4011);
     }
     
     const user = await UserService.verifyTokenService(token);
     
-    res.json({
-      success: true,
-      data: user
-    });
+    res.success(user, 'token验证成功', 2008);
   } catch (error) {
-    res.status(401).json({
-      success: false,
-      message: error.message
-    });
+    res.error(error.message, 4012);
   }
 };
 

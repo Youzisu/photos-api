@@ -262,12 +262,12 @@
 
                         const data = await response.json();
 
-                        if (data.success) {
+                        if (data.code >= 2000 && data.code < 3000) {
                             // 保存token到localStorage
                             localStorage.setItem('token', data.data.token);
                             localStorage.setItem('admin_user', JSON.stringify(data.data.user));
                             
-                            showMessage('登录成功，正在跳转...', 'success');
+                            showMessage(data.message || '登录成功，正在跳转...', 'success');
                             
                             // 跳转到管理页面
                             setTimeout(() => {
@@ -297,7 +297,7 @@
                         })
                         .then(response => response.json())
                         .then(data => {
-                            if (data.success) {
+                            if (data.code >= 2000 && data.code < 3000) {
                                 window.location.href = 'dashboard.html';
                             }
                         })

@@ -7,9 +7,9 @@ class PhotoController {
     try {
       const { url } = req.body;
       const photo = await createPhotoService(url);
-      res.status(201).json(photo);
+      res.success(photo, '照片创建成功', 2000);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.error(error.message, 4000);
     }
   }
 
@@ -23,16 +23,16 @@ class PhotoController {
       
       // 验证分页参数
       if (page < 1) {
-        return res.status(400).json({ message: 'Page must be greater than 0' });
+        return res.error('页码必须大于0', 4001);
       }
       if (limit < 1 || limit > 100) {
-        return res.status(400).json({ message: 'Limit must be between 1 and 100' });
+        return res.error('每页数量必须在1-100之间', 4001);
       }
       
       const result = await getAllPhotosService(page, limit);
-      res.json(result);
+      res.success(result, '获取照片列表成功', 2000);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.error(error.message, 5000);
     }
   }
 
@@ -41,11 +41,11 @@ class PhotoController {
     try {
       const photo = await getPhotoByIdService(req.params.id);
       if (!photo) {
-        return res.status(404).json({ message: 'Photo not found' });
+        return res.error('照片不存在', 4040);
       }
-      res.json(photo);
+      res.success(photo, '获取照片成功', 2000);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.error(error.message, 5000);
     }
   }
 
@@ -56,12 +56,12 @@ class PhotoController {
       const photo = await updatePhotoService(req.params.id, url);
       
       if (!photo) {
-        return res.status(404).json({ message: 'Photo not found' });
+        return res.error('照片不存在', 4040);
       }
       
-      res.json(photo);
+      res.success(photo, '照片更新成功', 2000);
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      res.error(error.message, 4000);
     }
   }
 
@@ -71,12 +71,12 @@ class PhotoController {
       const photo = await deletePhotoService(req.params.id);
       
       if (!photo) {
-        return res.status(404).json({ message: 'Photo not found' });
+        return res.error('照片不存在', 4040);
       }
       
-      res.json({ message: 'Photo deleted successfully' });
+      res.success(null, '照片删除成功', 2000);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.error(error.message, 5000);
     }
   }
 
@@ -84,12 +84,12 @@ class PhotoController {
   static async getRandomPhoto(req, res) {
     try {
       const photo = await getRandomPhotoService();
-      if (!photo) {
-        return res.status(404).json({ message: 'No photos found' });
+      if (!photo || photo.length === 0) {
+        return res.error('没有找到照片', 4040);
       }
-      res.json(photo);
+      res.success(photo, '获取随机照片成功', 2000);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      res.error(error.message, 5000);
     }
   }
 }
