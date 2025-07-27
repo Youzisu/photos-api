@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理系统 - 登录</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-title {
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .alert-success {
+            background: #efe;
+            color: #363;
+            border: 1px solid #cfc;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="login-container">
+            <div class="login-header">
+                <h1 class="login-title">后台管理系统</h1>
+                <p class="login-subtitle">请登录您的账户</p>
+            </div>
+
+            <div v-if="message.text" :class="['alert', message.type === 'error' ? 'alert-error' : 'alert-success']">
+                {{ message.text }}
+            </div>
+
+            <form @submit.prevent="handleLogin">
+                <div class="form-group">
+                    <label class="form-label" for="username">用户名或邮箱</label>
+                    <input 
+                        type="text" 
+                        id="username"
+                        class="form-input"
+                        v-model="loginForm.username"
+                        placeholder="请输入用户名或邮箱"
+                        required
+                        :disabled="loading"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">密码</label>
+                    <input 
+                        type="password" 
+                        id="password"
+                        class="form-input"
+                        v-model="loginForm.password"
+                        placeholder="请输入密码"
+                        required
+                        :disabled="loading"
+                    >
+                </div>
+
+                <button type="submit" class="login-btn" :disabled="loading">
+                    <span v-if="loading" class="loading"></span>
+                    <span v-else>登录</span>
+                </button>
+            </form>
+
+            <div class="register-link">
+                <p>还没有账户？ <a href="register.html">立即注册</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, reactive } = Vue;
+
+        createApp({
+            setup() {
+                const loginForm = reactive({
+                    username: '',
+                    password: ''
+                });
+
+                const loading = ref(false);
+                const message = reactive({
+                    text: '',
+                    type: ''
+                });
+
+                const showMessage = (text, type = 'error') => {
+                    message.text = text;
+                    message.type = type;
+                    setTimeout(() => {
+                        message.text = '';
+                    }, 5000);
+                };
+
+                const handleLogin = async () => {
+                    if (!loginForm.username || !loginForm.password) {
+                        showMessage('请填写完整的登录信息');
+                        return;
+                    }
+
+                    loading.value = true;
+                    
+                    try {
+                        const response = await fetch('/api/users/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                username: loginForm.username,
+                                password: loginForm.password
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            // 保存token到localStorage
+                            localStorage.setItem('token', data.data.token);
+                            localStorage.setItem('admin_user', JSON.stringify(data.data.user));
+                            
+                            showMessage('登录成功，正在跳转...', 'success');
+                            
+                            // 跳转到管理页面
+                            setTimeout(() => {
+                                window.location.href = 'dashboard.html';
+                            }, 1000);
+                        } else {
+                            showMessage(data.message || '登录失败');
+                        }
+                    } catch (error) {
+                        console.error('登录错误:', error);
+                        showMessage('网络错误，请稍后重试');
+                    } finally {
+                        loading.value = false;
+                    }
+                };
+
+                // 检查是否已经登录
+                const checkAuth = () => {
+                    const token = localStorage.getItem('token');
+                    if (token) {
+                        // 验证token是否有效
+                        fetch('/api/users/verify', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.location.href = 'dashboard.html';
+                            }
+                        })
+                        .catch(() => {
+                            // token无效，清除本地存储
+                            localStorage.removeItem('token');
+                            localStorage.removeItem('admin_user');
+                        });
+                    }
+                };
+
+                // 页面加载时检查认证状态
+                checkAuth();
+
+                return {
+                    loginForm,
+                    loading,
+                    message,
+                    handleLogin
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

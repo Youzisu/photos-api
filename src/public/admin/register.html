@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理系统 - 注册</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .register-title {
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .register-subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .register-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .alert-success {
+            background: #efe;
+            color: #363;
+            border: 1px solid #cfc;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .password-strength {
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .strength-weak { color: #e74c3c; }
+        .strength-medium { color: #f39c12; }
+        .strength-strong { color: #27ae60; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="register-container">
+            <div class="register-header">
+                <h1 class="register-title">创建账户</h1>
+                <p class="register-subtitle">注册新的管理员账户</p>
+            </div>
+
+            <div v-if="message.text" :class="['alert', message.type === 'error' ? 'alert-error' : 'alert-success']">
+                {{ message.text }}
+            </div>
+
+            <form @submit.prevent="handleRegister">
+                <div class="form-group">
+                    <label class="form-label" for="username">用户名</label>
+                    <input 
+                        type="text" 
+                        id="username"
+                        class="form-input"
+                        v-model="registerForm.username"
+                        placeholder="请输入用户名（3-20个字符）"
+                        required
+                        :disabled="loading"
+                        minlength="3"
+                        maxlength="20"
+                    >
+                </div>
+
+
+
+                <div class="form-group">
+                    <label class="form-label" for="password">密码</label>
+                    <input 
+                        type="password" 
+                        id="password"
+                        class="form-input"
+                        v-model="registerForm.password"
+                        placeholder="请输入密码（至少6个字符）"
+                        required
+                        :disabled="loading"
+                        minlength="6"
+                        @input="checkPasswordStrength"
+                    >
+                    <div v-if="passwordStrength.text" :class="['password-strength', passwordStrength.class]">
+                        {{ passwordStrength.text }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="confirmPassword">确认密码</label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword"
+                        class="form-input"
+                        v-model="registerForm.confirmPassword"
+                        placeholder="请再次输入密码"
+                        required
+                        :disabled="loading"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="role">角色</label>
+                    <select 
+                        id="role"
+                        class="form-select"
+                        v-model="registerForm.role"
+                        :disabled="loading"
+                    >
+                        <option value="user">普通用户</option>
+                        <option value="admin">管理员</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="register-btn" :disabled="loading || !isFormValid">
+                    <span v-if="loading" class="loading"></span>
+                    <span v-else>注册</span>
+                </button>
+            </form>
+
+            <div class="login-link">
+                <p>已有账户？ <a href="login.html">立即登录</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, reactive, computed } = Vue;
+
+        createApp({
+            setup() {
+                const registerForm = reactive({
+                    username: '',
+                    password: '',
+                    confirmPassword: '',
+                    role: 'user'
+                });
+
+                const loading = ref(false);
+                const message = reactive({
+                    text: '',
+                    type: ''
+                });
+
+                const passwordStrength = reactive({
+                    text: '',
+                    class: ''
+                });
+
+                const isFormValid = computed(() => {
+                    return registerForm.username.length >= 3 &&
+                           registerForm.password.length >= 6 &&
+                           registerForm.password === registerForm.confirmPassword;
+                });
+
+                const showMessage = (text, type = 'error') => {
+                    message.text = text;
+                    message.type = type;
+                    setTimeout(() => {
+                        message.text = '';
+                    }, 5000);
+                };
+
+                const checkPasswordStrength = () => {
+                    const password = registerForm.password;
+                    if (password.length === 0) {
+                        passwordStrength.text = '';
+                        return;
+                    }
+
+                    let strength = 0;
+                    if (password.length >= 6) strength++;
+                    if (password.length >= 8) strength++;
+                    if (/[a-z]/.test(password)) strength++;
+                    if (/[A-Z]/.test(password)) strength++;
+                    if (/[0-9]/.test(password)) strength++;
+                    if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+                    if (strength <= 2) {
+                        passwordStrength.text = '密码强度：弱';
+                        passwordStrength.class = 'strength-weak';
+                    } else if (strength <= 4) {
+                        passwordStrength.text = '密码强度：中等';
+                        passwordStrength.class = 'strength-medium';
+                    } else {
+                        passwordStrength.text = '密码强度：强';
+                        passwordStrength.class = 'strength-strong';
+                    }
+                };
+
+                const handleRegister = async () => {
+                    if (!isFormValid.value) {
+                        showMessage('请填写完整且正确的注册信息');
+                        return;
+                    }
+
+                    if (registerForm.password !== registerForm.confirmPassword) {
+                        showMessage('两次输入的密码不一致');
+                        return;
+                    }
+
+                    loading.value = true;
+                    
+                    try {
+                        const response = await fetch('/api/users/register', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                username: registerForm.username,
+                                password: registerForm.password,
+                                role: registerForm.role
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            showMessage('注册成功！正在跳转到登录页面...', 'success');
+                            
+                            // 跳转到登录页面
+                            setTimeout(() => {
+                                window.location.href = 'login.html';
+                            }, 2000);
+                        } else {
+                            showMessage(data.message || '注册失败');
+                        }
+                    } catch (error) {
+                        console.error('注册错误:', error);
+                        showMessage('网络错误，请稍后重试');
+                    } finally {
+                        loading.value = false;
+                    }
+                };
+
+                return {
+                    registerForm,
+                    loading,
+                    message,
+                    passwordStrength,
+                    isFormValid,
+                    handleRegister,
+                    checkPasswordStrength
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

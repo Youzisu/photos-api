@@ -29,6 +29,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// 静态文件中间件
+app.use(express.static(path.join(__dirname, 'public')));
+
 // 首页路由
 app.get('/', (req, res) => {
   try {
