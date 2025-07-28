@@ -7,7 +7,7 @@
 - 随机图片api[https://photos.茶馆.club/api/photos/random](https://photos.茶馆.club/api/photos/random)
 
 # 图例
-![wechat_2025-07-28_122923_783.png](doc/wechat_2025-07-28_122923_783.png)![实力](./doc/122745_164.png![wechat_2025-07-28_122923_783.png](doc/wechat_2025-07-28_122923_783.png))
+![wechat_2025-07-28_122923_783.png](doc/wechat_2025-07-28_122923_783.png)
 
 ## 功能特性
 
