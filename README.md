@@ -1,10 +1,13 @@
-# Photos API
+# 写真馆 API
 
-一个基于 Node.js 和 Express 的照片管理 API 系统，提供用户认证、照片上传、管理等功能。
+一个基于nodejs的写真馆API和前端页面的一体化项目；
 
 # 示例
 - 随机图片[https://photos.茶馆.club//random](https://photos.茶馆.club/random)
 - 随机图片api[https://photos.茶馆.club/api/photos/random](https://photos.茶馆.club/api/photos/random)
+
+# 图例
+![wechat_2025-07-28_122923_783.png](doc/wechat_2025-07-28_122923_783.png)![实力](./doc/122745_164.png![wechat_2025-07-28_122923_783.png](doc/wechat_2025-07-28_122923_783.png))
 
 ## 功能特性
 
@@ -28,7 +31,7 @@
 
 ### 环境要求
 
-- Node.js >= 14.0.0
+- Node.js >= 20.0.0
 - MongoDB >= 4.0
 - npm 或 pnpm
 
